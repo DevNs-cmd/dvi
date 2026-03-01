@@ -1,279 +1,341 @@
-// DOM Elements
-const hamburger = document.querySelector('.hamburger');
-const mobileMenu = document.querySelector('.mobile-menu');
-const mobileLinks = document.querySelectorAll('.mobile-nav-links a');
-const navLinks = document.querySelectorAll('.nav-links a');
-const navbar = document.querySelector('.navbar');
-const enrollmentForm = document.getElementById('enrollment-form');
-const contactForm = document.querySelector('.contact-form form');
-const newsletterForm = document.querySelector('.newsletter-form');
+document.addEventListener('DOMContentLoaded', () => {
+    const navbar = document.querySelector('.navbar');
+    const authModal = document.getElementById('auth-modal');
+    const modalOverlay = document.querySelector('.modal-overlay');
+    const loginTriggers = document.querySelectorAll('.login-trigger');
+    const authTabs = document.querySelectorAll('.auth-tab');
+    const downloadBtns = document.querySelectorAll('.download-notes');
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const navLinksItems = document.querySelectorAll('.nav-links a');
 
-// Mobile Menu Toggle
-hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('active');
-    
-    // Animate hamburger
-    const spans = hamburger.querySelectorAll('span');
-    if (mobileMenu.classList.contains('active')) {
-        spans[0].style.transform = 'rotate(45deg) translate(5px, 6px)';
-        spans[1].style.opacity = '0';
-        spans[2].style.transform = 'rotate(-45deg) translate(5px, -6px)';
-    } else {
-        spans[0].style.transform = 'none';
-        spans[1].style.opacity = '1';
-        spans[2].style.transform = 'none';
-    }
-});
-
-// Close mobile menu when clicking a link
-mobileLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        mobileMenu.classList.remove('active');
-        const spans = hamburger.querySelectorAll('span');
-        spans[0].style.transform = 'none';
-        spans[1].style.opacity = '1';
-        spans[2].style.transform = 'none';
-    });
-});
-
-// Navbar scroll effect
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.style.boxShadow = '0 4px 30px rgba(124, 58, 237, 0.15)';
-    } else {
-        navbar.style.boxShadow = '0 4px 20px rgba(124, 58, 237, 0.1)';
-    }
-});
-
-// Smooth scroll for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const headerOffset = 80;
-            const elementPosition = target.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// Active link highlighting on scroll
-const sections = document.querySelectorAll('section[id]');
-
-function highlightNavLink() {
-    const scrollY = window.pageYOffset;
-
-    sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            document.querySelector('.nav-links a.active')?.classList.remove('active');
-            const activeLink = document.querySelector(`.nav-links a[href="#${sectionId}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
-        }
-    });
-}
-
-window.addEventListener('scroll', highlightNavLink);
-
-// Form submissions
-enrollmentForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('Thank you for your enrollment request! We will contact you shortly for payment details.');
-    enrollmentForm.reset();
-});
-
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('Thank you for your message! We will get back to you soon.');
-    contactForm.reset();
-});
-
-newsletterForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const emailInput = newsletterForm.querySelector('input');
-    if (emailInput.value) {
-        alert('Thank you for subscribing to our newsletter!');
-        emailInput.value = '';
-    }
-});
-
-// Payment button alert
-const paymentButton = document.querySelector('.btn-payment');
-if (paymentButton) {
-    paymentButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('Redirecting to secure payment gateway...');
-    });
-}
-
-// Scroll animations - Intersection Observer
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('animate');
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Observe elements for animation
-document.querySelectorAll('.about-card, .course-card, .online-course-card').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(el);
-});
-
-// Add animation class handler
-const animatedElements = document.querySelectorAll('.about-card, .course-card, .online-course-card');
-
-animatedElements.forEach((el, index) => {
-    el.style.transitionDelay = `${index * 0.1}s`;
-});
-
-// Animation class
-const style = document.createElement('style');
-style.textContent = `
-    .animate {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
-    }
-`;
-document.head.appendChild(style);
-
-// Play button hover effect for online courses
-const playButtons = document.querySelectorAll('.play-button');
-playButtons.forEach(button => {
-    button.addEventListener('mouseenter', () => {
-        button.style.transform = 'scale(1.1)';
-    });
-    button.addEventListener('mouseleave', () => {
-        button.style.transform = 'scale(1)';
-    });
-});
-
-// Button ripple effect
-document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        const rect = this.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const ripple = document.createElement('span');
-        ripple.style.cssText = `
-            position: absolute;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            pointer-events: none;
-            width: 100px;
-            height: 100px;
-            left: ${x - 50}px;
-            top: ${y - 50}px;
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-        `;
-        
-        this.style.position = 'relative';
-        this.style.overflow = 'hidden';
-        this.appendChild(ripple);
-        
-        setTimeout(() => ripple.remove(), 600);
-    });
-});
-
-// Add ripple keyframes
-const rippleStyle = document.createElement('style');
-rippleStyle.textContent = `
-    @keyframes ripple {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(rippleStyle);
-
-// Counter animation for stats
-const statNumbers = document.querySelectorAll('.stat-number');
-
-const animateCounter = (el) => {
-    const target = parseInt(el.textContent);
-    const duration = 2000;
-    const step = target / (duration / 16);
-    let current = 0;
-    
-    const updateCounter = () => {
-        current += step;
-        if (current < target) {
-            el.textContent = Math.floor(current) + '+';
-            requestAnimationFrame(updateCounter);
+    // Navbar Scroll Effect
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
         } else {
-            el.textContent = target + '+';
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Mobile Menu Toggle
+    hamburger?.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+    });
+
+    navLinksItems.forEach(item => {
+        item.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+        });
+    });
+
+    // Modal Functionality
+    const openModal = () => {
+        if (authModal) {
+            authModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
     };
-    
-    updateCounter();
-};
 
-// Observe stats for animation
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const statNumber = entry.target.querySelector('.stat-number');
-            if (statNumber && statNumber.textContent.includes('+')) {
-                animateCounter(statNumber);
+    const closeModal = () => {
+        if (authModal) {
+            authModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    };
+
+    loginTriggers.forEach(btn => btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+    }));
+
+    modalOverlay?.addEventListener('click', closeModal);
+
+    // Tab Switching
+    authTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            authTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+
+    // Delayed Initial Popup (Once per session)
+    if (!sessionStorage.getItem('popupShown')) {
+        setTimeout(() => {
+            openModal();
+            sessionStorage.setItem('popupShown', 'true');
+        }, 3000); // 3 seconds delay for initial "WOW" effect
+    }
+
+    // Mock Actions - Notes Click triggers Modal
+    downloadBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal();
+        });
+    });
+
+    // Scroll Animations using Intersection Observer
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
-            statsObserver.unobserve(entry.target);
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.course-card, .about-card, .section-header').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        observer.observe(el);
+    });
+
+    // Smooth Scroll for Navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Chatbot Functionality
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatWindow = document.getElementById('chat-window');
+    const chatClose = document.getElementById('chat-close');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const quickReplies = document.querySelectorAll('.quick-reply-btn');
+
+    const toggleChat = () => {
+        chatWindow.classList.toggle('active');
+        if (chatWindow.classList.contains('active')) {
+            chatInput.focus();
+        }
+    };
+
+    chatToggle?.addEventListener('click', toggleChat);
+    chatClose?.addEventListener('click', toggleChat);
+
+    const addMessage = (text, sender) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender);
+        messageDiv.textContent = text;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    const getBotResponse = (input) => {
+        const query = input.toLowerCase();
+
+        if (query.includes('course') || query.includes('program')) {
+            return "We offer courses in BCC (Basics), DWD (Web Design), Python, DIT (Diploma), Graphics, and Tally Prime. Which one interests you?";
+        } else if (query.includes('admission')) {
+            return "You can enroll directly through our website by clicking the 'Enroll Now' button, or visit our center in Govindpuri, Delhi.";
+        } else if (query.includes('duration') || query.includes('time')) {
+            return "Course durations range from 3 months to 1 year depending on the program. BCC is 3 months, while DIT is a 1-year diploma.";
+        } else if (query.includes('contact') || query.includes('where') || query.includes('location')) {
+            return "We are located at Govindpuri, Kalkaji, New Delhi. You can also email us at info@devaashi.edu.";
+        } else if (query.includes('fee') || query.includes('price') || query.includes('cost')) {
+            return "Our fees are very competitive. For exact fee structure of specific courses, please provide your contact number, and our counselor will call you.";
+        } else if (query.includes('hello') || query.includes('hi')) {
+            return "Hello! How can I assist you with your tech education today?";
+        }
+
+        return "I'm not sure about that. Would you like to talk to our human counselor? Call us at our center for more details!";
+    };
+
+    const handleSend = () => {
+        const text = chatInput.value.trim();
+        if (text) {
+            addMessage(text, 'user');
+            chatInput.value = '';
+
+            setTimeout(() => {
+                const response = getBotResponse(text);
+                addMessage(response, 'bot');
+            }, 800);
+        }
+    };
+
+    chatSend?.addEventListener('click', handleSend);
+    chatInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+    });
+
+    // Handle Quick Replies
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('quick-reply-btn')) {
+            const text = e.target.textContent;
+            addMessage(text, 'user');
+
+            setTimeout(() => {
+                const response = getBotResponse(text);
+                addMessage(response, 'bot');
+            }, 800);
         }
     });
-}, { threshold: 0.5 });
 
-document.querySelectorAll('.hero-stats .stat').forEach(stat => {
-    statsObserver.observe(stat);
+    // --- Three.js 3D Graphics ---
+    const initThreeJS = () => {
+        const bgContainer = document.getElementById('hero-canvas');
+        const visualContainer = document.getElementById('canvas-3d');
+        if (!bgContainer || !visualContainer) return;
+
+        // 1. Background Particles
+        const bgScene = new THREE.Scene();
+        const bgCamera = new THREE.PerspectiveCamera(75, bgContainer.clientWidth / bgContainer.clientHeight, 0.1, 1000);
+        const bgRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        bgRenderer.setSize(bgContainer.clientWidth, bgContainer.clientHeight);
+        bgContainer.appendChild(bgRenderer.domElement);
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1500;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.005,
+            color: 0x6D28D9,
+            transparent: true,
+            opacity: 0.5
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        bgScene.add(particlesMesh);
+        bgCamera.position.z = 3;
+
+        // 2. Main 3D Object (Geometric Tech Sphere)
+        const visualScene = new THREE.Scene();
+        const visualCamera = new THREE.PerspectiveCamera(75, visualContainer.clientWidth / visualContainer.clientHeight, 0.1, 1000);
+        const visualRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        visualRenderer.setSize(visualContainer.clientWidth, visualContainer.clientHeight);
+        visualContainer.appendChild(visualRenderer.domElement);
+
+        // Core Group for complex 6D rotation
+        const g6Group = new THREE.Group();
+        visualScene.add(g6Group);
+
+        const geometry = new THREE.IcosahedronGeometry(1.5, 1);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x6D28D9,
+            wireframe: true,
+            transparent: true,
+            opacity: 1,
+            emissive: 0x4C1D95,
+            emissiveIntensity: 0.5
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        g6Group.add(mesh);
+
+        // Inner Core
+        const innerGeometry = new THREE.IcosahedronGeometry(0.7, 0);
+        const innerMaterial = new THREE.MeshPhongMaterial({
+            color: 0xF59E0B,
+            emissive: 0xF59E0B,
+            emissiveIntensity: 1,
+            shininess: 100
+        });
+        const innerMesh = new THREE.Mesh(innerGeometry, innerMaterial);
+        g6Group.add(innerMesh);
+
+        // Energy Rings (the "6D" feel)
+        const ringGeo = new THREE.TorusGeometry(2.1, 0.012, 16, 100);
+        const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x6D28D9, transparent: true, opacity: 0.5 });
+        const ringMat2 = new THREE.MeshBasicMaterial({ color: 0xF59E0B, transparent: true, opacity: 0.5 });
+        const ringMat3 = new THREE.MeshBasicMaterial({ color: 0xC4B5FD, transparent: true, opacity: 0.5 });
+
+        const ring1 = new THREE.Mesh(ringGeo, ringMat1);
+        const ring2 = new THREE.Mesh(ringGeo, ringMat2);
+        const ring3 = new THREE.Mesh(ringGeo, ringMat3);
+
+        ring2.rotation.x = Math.PI / 2;
+        ring3.rotation.y = Math.PI / 4;
+
+        g6Group.add(ring1);
+        g6Group.add(ring2);
+        g6Group.add(ring3);
+
+        // Lights
+        const pointLight1 = new THREE.PointLight(0x6D28D9, 3, 15);
+        visualScene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0xF59E0B, 3, 15);
+        visualScene.add(pointLight2);
+
+        visualScene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+        visualCamera.position.z = 5.5;
+
+        // Animation Loop
+        let time = 0;
+        const animate = () => {
+            requestAnimationFrame(animate);
+            time += 0.015;
+
+            particlesMesh.rotation.y += 0.0003;
+            particlesMesh.rotation.x += 0.0001;
+
+            // Complex Group Animation
+            g6Group.rotation.y += 0.007;
+            g6Group.rotation.z += 0.004;
+
+            mesh.rotation.x += 0.015;
+            innerMesh.rotation.y -= 0.025;
+
+            // Pulse Effect
+            const pulse = 1 + Math.sin(time) * 0.12;
+            mesh.scale.set(pulse, pulse, pulse);
+            innerMesh.scale.set(1.1 - pulse / 6, 1.1 - pulse / 6, 1.1 - pulse / 6);
+
+            // Moving Lights
+            pointLight1.position.x = Math.cos(time) * 4;
+            pointLight1.position.z = Math.sin(time) * 4;
+            pointLight2.position.x = Math.sin(time) * 4;
+            pointLight2.position.y = Math.cos(time) * 4;
+
+            ring1.rotation.y += 0.05;
+            ring2.rotation.z += 0.04;
+            ring3.rotation.x += 0.03;
+
+            bgRenderer.render(bgScene, bgCamera);
+            visualRenderer.render(visualScene, visualCamera);
+        };
+
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            bgCamera.aspect = bgContainer.clientWidth / bgContainer.clientHeight;
+            bgCamera.updateProjectionMatrix();
+            bgRenderer.setSize(bgContainer.clientWidth, bgContainer.clientHeight);
+
+            visualCamera.aspect = visualContainer.clientWidth / visualContainer.clientHeight;
+            visualCamera.updateProjectionMatrix();
+            visualRenderer.setSize(visualContainer.clientWidth, visualContainer.clientHeight);
+        });
+    };
+
+    initThreeJS();
+
 });
-
-// Initial animation for hero content
-window.addEventListener('load', () => {
-    const heroContent = document.querySelector('.hero-content');
-    if (heroContent) {
-        heroContent.classList.add('loaded');
-    }
-});
-
-// Add loaded class styles
-const loadedStyle = document.createElement('style');
-loadedStyle.textContent = `
-    .hero-content {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    .hero-content.loaded {
-        opacity: 1;
-        transform: translateY(0);
-    }
-`;
-document.head.appendChild(loadedStyle);
-
-// Trigger initial animation
-setTimeout(() => {
-    document.querySelector('.hero-content')?.classList.add('loaded');
-}, 100);
-
-console.log('Devaashi Institute Website - Loaded Successfully!');
